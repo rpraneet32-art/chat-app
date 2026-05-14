@@ -1,51 +1,48 @@
-const express = require('express');
-const http = require('http');
-const cors = require('cors');
-const { Server } = require('socket.io');
+const express = require("express");
+const http = require("http");
+const cors = require("cors");
+const { Server } = require("socket.io");
 
 const app = express();
+
 app.use(cors({
-  origin: ['https://chat-app-mu-six-84.vercel.app', 'https://squeeze-eleven-tux.ngrok-free.dev', 'http://localhost:5173', 'http://localhost:5174'],
-  methods: ['GET', 'POST']
+  origin: "https://chat-app-git-main-ankitanarayan-officials-projects.vercel.app",
+  methods: ["GET", "POST"],
+  credentials: true
 }));
-app.use(express.json());
 
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
+const server = http.createServer(app);
 
-const httpServer = http.createServer(app);
-
-const io = new Server(httpServer, {
+const io = new Server(server, {
   cors: {
-    origin: ['https://chat-app-mu-six-84.vercel.app', 'https://squeeze-eleven-tux.ngrok-free.dev', 'http://localhost:5173', 'http://localhost:5174'],
-    methods: ['GET', 'POST']
+    origin: "https://chat-app-git-main-ankitanarayan-officials-projects.vercel.app",
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
 
-  socket.on('join_room', ({ username, room }) => {
+  socket.on("join_room", (room) => {
     socket.join(room);
-    console.log(`${username} joined ${room}`);
-    socket.to(room).emit('user_joined', username);
   });
 
-  socket.on('send_message', ({ room, message, username }) => {
-    socket.to(room).emit('receive_message', { message, username });
+  socket.on("send_message", (data) => {
+    socket.to(data.room).emit("receive_message", data);
   });
 
-  socket.on('typing', ({ room, username }) => {
-    socket.to(room).emit('typing', username);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('A user disconnected:', socket.id);
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
   });
 });
 
-const PORT = process.env.PORT || 3001;
-httpServer.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.get("/", (req, res) => {
+  res.send("Backend running");
+});
+
+const PORT = process.env.PORT || 5000;
+
+server.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
 });
