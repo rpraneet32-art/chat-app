@@ -13,6 +13,7 @@ Live URL: https://chat-app-mu-six-84.vercel.app
 - Shows a typing indicator when someone is composing a message
 - Displays a notification when a new user joins the room
 - Supports multiple rooms including custom rooms with custom icons
+- Sent messages appear on the right, received messages on the left
 
 ---
 
@@ -23,17 +24,17 @@ Live URL: https://chat-app-mu-six-84.vercel.app
 - Vite (build tool)
 - Socket.io-client (real-time connection)
 - CSS (styling)
+- Deployed on Vercel
 
 **Backend**
 - Node.js (runtime)
 - Express (web server)
 - Socket.io (WebSocket layer)
 - CORS (cross-origin support)
+- Deployed on Render (permanent) or ngrok (local tunnel)
 
-**Deployment**
-- Frontend: Vercel
-- Backend: Railway
-- Version control: GitHub
+**Version control**
+- GitHub
 
 ---
 
@@ -45,19 +46,13 @@ Live URL: https://chat-app-mu-six-84.vercel.app
 - npm
 
 ### Clone the repository
-
-```
 git clone https://github.com/AnkitaNarayan-official/chat-app.git
 cd chat-app
-```
 
 ### Start the server
-
-```
 cd server
 npm install
 node index.js
-```
 
 Server runs on http://localhost:3001
 
@@ -111,8 +106,17 @@ Socket.io rooms are used to separate conversations. When a user joins a room, th
 
 **Client (.env)**
 ```
-VITE_SERVER_URL=https://your-railway-url.up.railway.app
+VITE_SERVER_URL=https://your-server-url
 ```
+
+---
+
+---
+
+## Known limitations
+
+- When using ngrok as the backend tunnel, the server URL changes every time the laptop restarts. Update the VITE_SERVER_URL environment variable on Vercel and redeploy when this happens.
+- Messages are not saved to a database. Refreshing the page clears the chat history.
 
 ---
 
