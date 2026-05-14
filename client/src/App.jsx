@@ -1,5 +1,5 @@
 import "./App.css";
-import io from "./socket";
+import socket from "./socket";
 import { useEffect, useState } from "react";
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
 
   const joinRoom = () => {
     if (username !== "" && room !== "") {
-      io.emit("join_room", room);
+      socket.emit("join_room", room);
       setShowChat(true);
     }
   };
@@ -25,23 +25,20 @@ function App() {
         time: new Date().toLocaleTimeString(),
       };
 
-      io.emit("send_message", messageData);
-
-      setMessageList((list) => [...list, messageData]);
+      // ONLY send to server
+      socket.emit("send_message", messageData);
 
       setCurrentMessage("");
     }
   };
 
   useEffect(() => {
-    io.on("receive_message", (data) => {
-      console.log("Received:", data);
-
+    socket.on("receive_message", (data) => {
       setMessageList((list) => [...list, data]);
     });
 
     return () => {
-      io.off("receive_message");
+      socket.off("receive_message");
     };
   }, []);
 
@@ -53,7 +50,7 @@ function App() {
 
           <input
             type="text"
-            placeholder="John..."
+            placeholder="Name..."
             onChange={(event) => {
               setUsername(event.target.value);
             }}
@@ -67,7 +64,7 @@ function App() {
             }}
           />
 
-          <button onClick={joinRoom}>Join A Room</button>
+          <button onClick={joinRoom}>Join Room</button>
         </div>
       ) : (
         <div className="chat-window">
@@ -80,7 +77,11 @@ function App() {
               return (
                 <div
                   className="message"
-                  id={username === messageContent.author ? "you" : "other"}
+                  id={
+                    username === messageContent.author
+                      ? "you"
+                      : "other"
+                  }
                   key={index}
                 >
                   <div>
@@ -106,12 +107,16 @@ function App() {
               onChange={(event) => {
                 setCurrentMessage(event.target.value);
               }}
-              onKeyPress={(event) => {
-                event.key === "Enter" && sendMessage();
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  sendMessage();
+                }
               }}
             />
 
-            <button onClick={sendMessage}>&#9658;</button>
+            <button onClick={sendMessage}>
+              &#9658;
+            </button>
           </div>
         </div>
       )}
