@@ -84,10 +84,7 @@ function App() {
 
   const joinRoom = () => {
     if (username !== "" && selectedRoom) {
-      socket.emit("join_room", {
-        room: selectedRoom.name,
-        username: username,
-      });
+      socket.emit("join_room", selectedRoom.name);
 
       setRoom(selectedRoom.name);
 
@@ -96,14 +93,14 @@ function App() {
       setMessages([
         {
           system: true,
-          message: `You joined ${selectedRoom.name}`,
+          message: `${username} joined the room`,
         },
       ]);
     }
   };
 
   const sendMessage = async () => {
-    if (newMessage.trim() !== "") {
+    if (newMessage !== "") {
       const messageData = {
         room: room,
         author: username,
@@ -171,12 +168,6 @@ function App() {
         </div>
 
         <div className="messages-area">
-          {messages.length === 0 && (
-            <p className="empty-msg">
-              No messages yet 👋
-            </p>
-          )}
-
           {messages.map((msg, index) => {
             if (msg.system) {
               return (

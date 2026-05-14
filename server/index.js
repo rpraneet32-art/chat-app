@@ -5,12 +5,7 @@ const { Server } = require("socket.io");
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST"],
-  })
-);
+app.use(cors());
 
 const server = http.createServer(app);
 
@@ -24,13 +19,12 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
-  // JOIN ROOM
   socket.on("join_room", (data) => {
     socket.join(data.room);
 
     socket.to(data.room).emit(
       "user_joined",
-      `${data.username} joined the room`
+      data.username
     );
 
     console.log(
@@ -38,7 +32,6 @@ io.on("connection", (socket) => {
     );
   });
 
-  // SEND MESSAGE
   socket.on("send_message", (data) => {
     io.to(data.room).emit(
       "receive_message",
@@ -46,21 +39,11 @@ io.on("connection", (socket) => {
     );
   });
 
-  // TYPING
-  socket.on("typing", (username) => {
-    socket.broadcast.emit(
-      "typing",
-      username
-    );
-  });
-
-  // DISCONNECT
   socket.on("disconnect", () => {
-    console.log("User disconnected");
+    console.log("User disconnected:", socket.id);
   });
 });
 
-// TEST ROUTE
 app.get("/", (req, res) => {
   res.send("Backend running");
 });
@@ -68,7 +51,5 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
-  console.log(
-    `Server running on port ${PORT}`
-  );
+  console.log(`Server running on port ${PORT}`);
 });
