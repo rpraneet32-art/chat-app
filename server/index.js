@@ -4,7 +4,10 @@ const cors = require('cors');
 const { Server } = require('socket.io');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: ['https://chat-app-mu-six-84.vercel.app', 'http://localhost:5173', 'http://localhost:5174'],
+  methods: ['GET', 'POST']
+}));
 app.use(express.json());
 
 app.get('/health', (req, res) => {
@@ -15,7 +18,8 @@ const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: '*'
+    origin: ['https://chat-app-mu-six-84.vercel.app', 'http://localhost:5173', 'http://localhost:5174'],
+    methods: ['GET', 'POST']
   }
 });
 
