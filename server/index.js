@@ -6,18 +6,16 @@ const { Server } = require("socket.io");
 const app = express();
 
 app.use(cors({
-  origin: "https://chat-app-git-main-ankitanarayan-officials-projects.vercel.app",
-  methods: ["GET", "POST"],
-  credentials: true
+  origin: "*",
+  methods: ["GET", "POST"]
 }));
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://chat-app-git-main-ankitanarayan-officials-projects.vercel.app",
-    methods: ["GET", "POST"],
-    credentials: true
+    origin: "*",
+    methods: ["GET", "POST"]
   }
 });
 
@@ -26,6 +24,7 @@ io.on("connection", (socket) => {
 
   socket.on("join_room", (room) => {
     socket.join(room);
+    console.log("Joined room:", room);
   });
 
   socket.on("send_message", (data) => {
